@@ -10,6 +10,7 @@ import lombok.Data;
 @Table(name ="logging")
 public class Persona {
 
+	//Aqui estan las variables del modelo para los productos de la subasta
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

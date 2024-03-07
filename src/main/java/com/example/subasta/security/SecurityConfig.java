@@ -19,6 +19,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableMethodSecurity
 public class SecurityConfig {
 
+	//Este metodo es el principal para la configuracion de filtros de la seguridad en el programa
+	//Se da acceso a ciertas URL sin necesidad de autenticación, en las demás se necesita.
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 		http.authorizeHttpRequests(auth->auth
@@ -30,12 +32,13 @@ public class SecurityConfig {
 		return http.build();
 		
 	}
-	
+		//Se declara este metodo para traer los detalles del usuario durante la autenticación
 		@Bean
 		public UserDetailsService userDetailsService() {
 			return new UserInfoUserDetailsService();
 		}
-	
+		//Este metodo es para autenticar a los usuarios, se utiliza el "DaoAuthenticationProvider" que es el que provee la autenticacion
+		// que utiliza el "DetailsService" para traer los detalles del usuario.
 		@Bean
 		public AuthenticationProvider authenticationProvider() {
 			DaoAuthenticationProvider daoAutheticationProvider = new DaoAuthenticationProvider();
@@ -43,7 +46,7 @@ public class SecurityConfig {
 			daoAutheticationProvider.setPasswordEncoder(passwordEncoder());
 			return daoAutheticationProvider;
 		}
-		
+		//Este metodo es unicamente para que la password que ingrese el usuario, al ser guardada en la base, este encriptada
 		@Bean
 		public PasswordEncoder passwordEncoder() {
 			return new BCryptPasswordEncoder();

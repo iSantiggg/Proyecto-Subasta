@@ -15,3 +15,6 @@ spring:
         dialect: org.hibernate.dialect.MySQL5Dialect
         show_sql: true
         format_sql: true
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

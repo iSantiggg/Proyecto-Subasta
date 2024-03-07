@@ -39,24 +39,28 @@ public class PersonaController {
 	private PasswordEncoder passwordEncoder;
 	
 	///////////////////////// Aqui estarán las solicitudes para la autenticación /////////////////////////
-	@GetMapping("/")
+	//Esta solicitud es únicamente para todo publico en donde es la pestaña de "HOME"
+	@GetMapping("/home")
 	public String goHome() {
 		return "Esta página es para todo el público, si necesitas ingresar a otra página, necesitarás autenticación";
 	}
-	
+	//Esta solicitud es más para la parte del back, en donde unicamente el ADMIN puede hacer uso
+	//La solicitud trae todos los usuarios registrados hasta el momento
 	@GetMapping("/usuarios/all")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Object> getAllUsers(){
 		return ResponseEntity.ok(userRepository.findAll());
 	}
-	
+	//Esta solicitud es más para la parte del back, en donde el USER y el ADMIN puede hacer uso
+	//La solicitud trae un unico usuario para ver los detalles del solicitado
 	@GetMapping("/usuario/detalles")
 	@PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
 	public ResponseEntity<Object> getMyDetails(){
 		return ResponseEntity.ok(userRepository.findByEmail(getLoggedInUserDetails().getUsername()));
 	}
-	
-	@PostMapping("/user/save")
+	//Esta solicitud es para cuando un usuario se quiere dar de alta, usando email, contraseña y su rol.
+	//En este caso, unicamente los usuarios que se quieran registrar, deben ser USER. (FRONTEND)
+	@PostMapping("/usuario/guardado")
 	public ResponseEntity<Object> saveUser(@RequestBody User user){
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		User result = userRepository.save(user);
@@ -65,7 +69,7 @@ public class PersonaController {
 		}
 		return ResponseEntity.status(404).body("Usuario no guardado");
 	}
-	
+	//Este metodo es el que da los detalles de la busqueda del usuario único.
 	public UserDetails getLoggedInUserDetails() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if(authentication != null && authentication.getPrincipal() instanceof UserDetails) {
@@ -75,7 +79,9 @@ public class PersonaController {
 	}
 	
 	///////////////////////// Aqui estarán las solicitudes para los productos de la subasta /////////////////////////
-	@GetMapping("/lista")
+	//Este solicitud es unicamente para ver los productos de la subasta
+	//Esta petición únicamente puede hacerla algun ADMIN
+	@GetMapping("/lista/subasta")
 	@PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
 	public ResponseEntity<List<Persona>>lista(){
 		List<Persona> person = new ArrayList<>();
@@ -92,8 +98,9 @@ public class PersonaController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
-	@PostMapping("/agregar")
+	//Esta peticion es para agregar un nuevo producto a la lista de los productos de la subasta
+	//Esta petición únicamente puede hacerla algun ADMIN
+	@PostMapping("/agregar/producto/subasta")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Persona>agregar(@RequestBody Persona logging){
 		Persona persoSave;
@@ -108,8 +115,9 @@ public class PersonaController {
 		}
 		return null;
 	}
-	
-	@DeleteMapping("/eliminar/{id}")
+	//Esta petición es para eliminar algún producto de la lista, este producto es eliminado por su id
+	//Esta petición únicamente puede hacerla algun ADMIN
+	@DeleteMapping("/eliminar/producto/subasta/{id}")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Boolean>eliminar(@PathVariable Long id){
 		try {
@@ -120,8 +128,9 @@ public class PersonaController {
 			return new ResponseEntity<>(false,HttpStatus.NOT_FOUND);
 		}
 	}
-	
-	@PatchMapping("/editar/{id}")
+	//Esta petición es para editar algún producto de la lista, este producto es editado por su id
+	//Esta petición únicamente puede hacerla algun ADMIN
+	@PatchMapping("/editar/producto/subasta/{id}")
 	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<Persona> editar(@PathVariable Long id, @RequestBody Persona persona) {
 		
