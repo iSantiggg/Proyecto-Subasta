@@ -85,7 +85,6 @@ public class PersonaController {
 	@PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
 	public ResponseEntity<List<Persona>>lista(){
 		List<Persona> person = new ArrayList<>();
-		
 		try {
 			person = personaService.listausuarios();
 			if(person != null) {
